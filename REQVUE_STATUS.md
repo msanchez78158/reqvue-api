@@ -26,6 +26,29 @@ primary deploy path; keep local and GitHub `main` in sync.**
 Local pipeline verification (same day, pre-reactivation): trimmer probes DLA
 11/11 and MoDOT 5/5; local end-to-end on DLA 14/16 fields matching baseline.
 
+**Demo hardening shipped 2026-07-16** (runner→coder→reviewer flow, reviewer
+verdict APPROVED):
+- **Upload size cap**: `_save_upload` rejects multipart uploads over 25 MB with
+  HTTP 413 while streaming (partial file unlinked); `/parse` now creates the
+  `JOB_STORE` entry only right before scheduling the background task, so 400/413
+  can no longer orphan a "processing" job.
+- **Scanned-PDF guard**: `_extract_markdown_from_file` raises a clear error when
+  extracted text is under 150 chars/page (real text RFQs run ~3,650+/page;
+  measured on both test PDFs). Scanned/image uploads now fail with an explicit
+  "no OCR — submit a text-based PDF" message instead of silently returning 16
+  nulls. Applies to v1 and v2 paths.
+- **LLM retry**: `extract_rfq_brief` retries the full DeepSeek call exactly once
+  on malformed JSON (`json.JSONDecodeError`) or schema mismatch (pydantic
+  `ValidationError`). Timeouts are still not retried.
+
+Reviewer's non-blocking notes (logged, not fixed): (1) `/parse/v2` still
+creates its job entry before `_save_upload`, so an oversized v2 upload orphans
+a "processing" job — v2 handler is under the no-touch constraint; fold into
+the open ship-vs-delete decision. (2) Pre-existing: the JSON `{"text": ...}`
+path has no body size cap (`request.json()` buffers arbitrarily large bodies).
+(3) Pre-existing: `JOB_STORE` has no eviction — unbounded growth over the
+process lifetime.
+
 Nondeterminism observed at temperature 0 across runs (content survives the
 trim; the model routes it to different fields):
 - `incoterms_fob` (DLA): "FOB Origin" (07-08) vs "FOB DESTINATION (See
