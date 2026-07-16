@@ -1,18 +1,41 @@
 # ReqVue Status — 2026-07-16
 
-## ⚠️ 2026-07-16 — PRODUCTION DOWN
+## 2026-07-16 — Railway reactivated, production verified; GitHub-repo landmine found
 
-`https://reqvue-api-production.up.railway.app/health` returns **404 "Application
-not found"** (Railway edge answers; the service itself is gone — deleted, paused,
-or unpaid). There is currently no live API. Plan of record: migrate to Fly.io
-rather than revive Railway.
+Timeline: production was found DOWN (404 "Application not found" — account
+lapsed/paused). Railway account reactivated same day; deployment `90d7e450`
+came online and was verified against real extractions via the new
+`verify_deploy.py` harness (jobs `8a9d596d` DLA, `f410bc99` MoDOT): all
+bid-critical checks PASS — DLA NSN/material/dimensions/FOB intact, MoDOT
+`quote_due_date` 07/09/2026 and `delivery_deadline` Sep 29 recovered. The
+serving image is the last `railway up` snapshot (2026-07-02 local code).
 
-Local pipeline re-verified same day (venv, repo root): trimmer probes DLA 11/11
-and MoDOT 5/5; full end-to-end `extract_rfq_brief` on `Testing/SPE8E426T1829.PDF`
-returned 14/16 fields matching the 2026-07-08 baseline (minor nondeterminism:
-`incoterms_fob` returned both "FOB Destination (see Schedule)" and "Deliver FOB:
-Origin" this run vs. "FOB Origin" on 07-08). Code and OpenRouter key are healthy;
-only the deployment is missing.
+**⚠️ LANDMINE — stale linked GitHub repo.** The Railway service is linked to
+GitHub `msanchez78158/reqvue-api` (visible in `railway status`; repo is
+PUBLIC — fetchable unauthenticated). That repo predates ALL 2026-07-02 fixes:
+no two-track trimmer (`_trim_structured` absent), `max_tokens=2000`, old
+non-JSON prompt. Any push to its main branch or a dashboard "redeploy from
+repo" will auto-deploy stale code and silently regress production. Until
+resolved (disconnect the repo from the service, or force-push current local
+main over it), deploy ONLY via `railway up` from this folder. Local folder
+became a real git repo today (root commit `c4ecb81`); the GitHub remote is
+added locally as `origin` for comparison, histories are unrelated.
+
+Local pipeline verification (same day, pre-reactivation): trimmer probes DLA
+11/11 and MoDOT 5/5; local end-to-end on DLA 14/16 fields matching baseline.
+
+Nondeterminism observed at temperature 0 across runs (content survives the
+trim; the model routes it to different fields):
+- `incoterms_fob` (DLA): "FOB Origin" (07-08) vs "FOB DESTINATION (See
+  Schedule); DELIVER FOB: ORIGIN" (07-16) — doc contains both strings.
+- `qty_tiers` (DLA): null (07-08, correct) vs `[16]` CLIN qty again (07-16) —
+  the known borderline issue.
+- MoDOT `finishing_secondary`/`tolerances_stated`: populated 07-08, null 07-16
+  with the same content folded into `missing_or_unclear`/`estimator_summary`.
+
+`verify_deploy.py` (repo root) is now the standard post-deploy check:
+`.venv/bin/python verify_deploy.py [base_url]` — uploads both baseline PDFs to
+`/parse`, polls, asserts bid-critical substrings, exits nonzero on failure.
 
 Persistent record of deployment/extraction state so future sessions don't depend on chat history.
 
