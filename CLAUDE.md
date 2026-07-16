@@ -40,11 +40,18 @@ Update it whenever extraction behavior or deployment state changes.**
 ## Deployment
 
 - Railway project **ReqVue**, service **ReqVue-api**,
-  `https://reqvue-api-production.up.railway.app`. Deploy with `railway up`
-  from repo root (not a git repo; Railway CLI may need
+  `https://reqvue-api-production.up.railway.app`. Deploy ONLY with
+  `railway up` from repo root (Railway CLI may need
   `export PATH="$HOME/.hermes/node/bin:$PATH"`).
-- Verify a deploy against real extraction output (`Testing/*.PDF` through
-  `/parse`), not just `/health` — "it builds" has been misleading before.
+- **Do not push to or deploy from the linked GitHub repo
+  (`msanchez78158/reqvue-api`) — it is stale and public**; a repo-triggered
+  build would regress production to the pre-2026-07-02 extractor. See
+  `REQVUE_STATUS.md` (2026-07-16 entry) until the link is removed or the repo
+  is synced.
+- Verify a deploy against real extraction output, not just `/health` —
+  "it builds" has been misleading before. Standard check:
+  `.venv/bin/python verify_deploy.py` (both baseline PDFs through the
+  deployed `/parse`, asserts bid-critical fields, exits nonzero on failure).
 
 ## Testing
 
@@ -54,37 +61,48 @@ Update it whenever extraction behavior or deployment state changes.**
 
 # Project Rules & Agentic Delegation Policy
 
-##  Subagent Delegation Architecture
-You operate as the primary 'architect' session. You MUST NOT execute routine file mapping, boilerplate coding, or security sweeps yourself. You must use the built-in subagent tool to delegate these tasks to specialized workers to save token efficiency and context window bloat.
+## Subagent Delegation Architecture
+The main session operates as the architect: it plans, delegates, and verifies.
+Delegate routine file mapping, boilerplate coding, and review sweeps to the
+project subagents to keep the main context focused on design decisions.
 
-###  The Worker Directory
-- **runner** (`~/.claude/agents/runner.md`): Low-effort scout bot (Haiku).
-- **coder** (`~/.claude/agents/coder.md`): Medium-effort implementation bot (Sonnet).
-- **reviewer** (`~/.claude/agents/reviewer.md`): Medium-effort sign-off bot (Fable).
+### The Worker Directory (project agents, `.claude/agents/`)
+- **runner** (`.claude/agents/runner.md`): fast scout (Haiku, low effort) —
+  directory mapping, grep sweeps, running the trimmer probes and
+  `verify_deploy.py`. Read/run only, never edits.
+- **coder** (`.claude/agents/coder.md`): implementation (Sonnet, medium
+  effort) — writes features and fixes from a blueprint; must prove changes run
+  locally before reporting done.
+- **reviewer** (`.claude/agents/reviewer.md`): sign-off (Fable, medium
+  effort) — security and quality pass; ends with APPROVED or REJECTED plus
+  mandatory fixes.
 
----
+## Delegation Rules
 
-##  Step-by-Step Subagent Trigger Rules
+### Rule 1 — Recon before planning
+For feature changes, bug investigations, or environment inspection that spans
+more than a couple of known files, send `runner` to map the relevant code,
+grep for references, and run baseline tests. Trivial lookups in a file already
+in context don't need a subagent.
 
-### Rule 1: Before Planning Anything (Recon Stage)
-- **TRIGGER**: Whenever the user asks to modify a feature, investigate a bug, or inspect the environment.
-- **ACTION**: Do not use your own tools to scan files. Instantly invoke the `runner` subagent.
-- **INSTRUCTION**: Ask `runner` to map out the relevant directory, grep for references, or run tests to gather baseline details. 
+### Rule 2 — Coder implements
+Once the plan is solid, hand `coder` the precise files, the design spec, and
+the constraints (see Constraints section above — they bind subagents too).
+Multi-file or novel code goes to `coder`; a one-line fix the architect can see
+end-to-end may be applied directly.
 
-### Rule 2: Before Implementation (Feature Writing Stage)
-- **TRIGGER**: Once a task plan is solidified and code needs to be generated or updated.
-- **ACTION**: Do not write the code. Invoke the `coder` subagent.
-- **INSTRUCTION**: Provide `coder` with the precise files, the design specifications, and ask it to write out the features or boilerplate.
+### Rule 3 — Reviewer before commit
+After `coder` finishes, `reviewer` scans the modified files for logical flaws,
+credential leaks, and consistency before anything is committed or deployed.
+**Never skip `reviewer` for changes touching the API surface (`main.py`
+routes), the extraction pipeline (`trimmer.py`, `extractor.py`, `models.py`),
+`Dockerfile`, or `requirements.txt`.** A REJECTED verdict goes back to `coder`
+with the fix list.
 
-### Rule 3: Before Committing Code (Security & Senior Pass Stage)
-- **TRIGGER**: As soon as `coder` finishes modifying files and updates the codebase.
-- **ACTION**: Do not accept the raw code immediately. Invoke the `reviewer` subagent.
-- **INSTRUCTION**: Command `reviewer` to scan the newly modified files specifically checking for logical flaws, credential leaks, and structure consistency.
-
----
-
-##  Hard Restrictions (The Negatives)
-- **NEVER** write feature code in the main `architect` context. Keep your main session strictly for high-level technical blueprints and delegation.
-- **NEVER** skip the `reviewer` step for any changes touching routing, database models, configuration, or authentication modules.
-- **NEVER** run heavy grep or search commands directly. Use `runner` for directory discovery.
+### Always
+- Extraction-path changes are verified with the trimmer probes locally and
+  `verify_deploy.py` against the deployed API after `railway up` — regardless
+  of which agent wrote the code.
+- Keep heavy multi-file searches out of the main context — that is `runner`'s
+  job.
 
