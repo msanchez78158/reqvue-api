@@ -2,6 +2,7 @@ import json
 import os
 
 from openai import APITimeoutError, OpenAI
+from pydantic import ValidationError
 
 from models import RFQBrief
 
@@ -123,53 +124,59 @@ def extract_rfq_brief(document_name: str, document_text: str) -> RFQBrief:
     client = _get_client()
     user_prompt = build_user_prompt(document_name, document_text)
 
-    try:
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.0,
-            # deepseek-v4-flash is a reasoning model: hidden reasoning tokens
-            # count toward this cap alongside the visible JSON (~600 tokens).
-            # 2000 truncated responses mid-string once richer trimmed content
-            # made reasoning longer.
-            max_tokens=6000,
-            timeout=OPENROUTER_TIMEOUT_SECONDS,
-        )
-    except APITimeoutError as exc:
-        raise RuntimeError(
-            f"OpenRouter request timed out after {OPENROUTER_TIMEOUT_SECONDS} seconds"
-        ) from exc
+    for attempt in range(2):
+        try:
+            try:
+                response = client.chat.completions.create(
+                    model=MODEL,
+                    messages=[
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=0.0,
+                    # deepseek-v4-flash is a reasoning model: hidden reasoning tokens
+                    # count toward this cap alongside the visible JSON (~600 tokens).
+                    # 2000 truncated responses mid-string once richer trimmed content
+                    # made reasoning longer.
+                    max_tokens=6000,
+                    timeout=OPENROUTER_TIMEOUT_SECONDS,
+                )
+            except APITimeoutError as exc:
+                raise RuntimeError(
+                    f"OpenRouter request timed out after {OPENROUTER_TIMEOUT_SECONDS} seconds"
+                ) from exc
 
-    raw = _strip_markdown_fences(response.choices[0].message.content or "")
-    parsed = json.loads(raw)
+            raw = _strip_markdown_fences(response.choices[0].message.content or "")
+            parsed = json.loads(raw)
 
-    if "properties" in parsed and isinstance(parsed["properties"], dict):
-        parsed = parsed["properties"]
+            if "properties" in parsed and isinstance(parsed["properties"], dict):
+                parsed = parsed["properties"]
 
-    valid_fields = set(RFQBrief.model_fields.keys())
-    parsed = {key: value for key, value in parsed.items() if key in valid_fields}
+            valid_fields = set(RFQBrief.model_fields.keys())
+            parsed = {key: value for key, value in parsed.items() if key in valid_fields}
 
-    for field_name in (
-        "rfq_id_and_org",
-        "quote_due_date",
-        "delivery_deadline",
-        "part_number_rev",
-        "material_and_grade",
-        "dimensions_raw",
-        "tolerances_stated",
-        "finishing_secondary",
-        "incoterms_fob",
-        "target_price",
-        "legal_penalties",
-        "qa_certs_required",
-        "competing_vendors",
-        "missing_or_unclear",
-        "estimator_summary",
-    ):
-        if isinstance(parsed.get(field_name), list):
-            parsed[field_name] = "; ".join(str(item) for item in parsed[field_name])
+            for field_name in (
+                "rfq_id_and_org",
+                "quote_due_date",
+                "delivery_deadline",
+                "part_number_rev",
+                "material_and_grade",
+                "dimensions_raw",
+                "tolerances_stated",
+                "finishing_secondary",
+                "incoterms_fob",
+                "target_price",
+                "legal_penalties",
+                "qa_certs_required",
+                "competing_vendors",
+                "missing_or_unclear",
+                "estimator_summary",
+            ):
+                if isinstance(parsed.get(field_name), list):
+                    parsed[field_name] = "; ".join(str(item) for item in parsed[field_name])
 
-    return RFQBrief.model_validate(parsed)
+            return RFQBrief.model_validate(parsed)
+        except (json.JSONDecodeError, ValidationError):
+            if attempt == 0:
+                continue
+            raise

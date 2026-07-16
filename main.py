@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+import pymupdf
 import pymupdf4llm
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Request, UploadFile
@@ -15,6 +16,8 @@ from trimmer import smart_trim
 load_dotenv()
 
 PORT = int(os.getenv("PORT", "8000"))
+MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+SCANNED_PDF_MIN_CHARS_PER_PAGE = 150
 UPLOAD_DIR = Path("/tmp/reqvue_uploads")
 JOB_STORE: dict[str, dict[str, Any]] = {}
 
@@ -34,18 +37,39 @@ def _save_upload(upload: UploadFile) -> Path:
     upload_path = UPLOAD_DIR / f"{uuid4()}{suffix}"
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+    total_bytes = 0
     with upload_path.open("wb") as destination:
         while True:
             chunk = upload.file.read(1024 * 1024)
             if not chunk:
                 break
+            total_bytes += len(chunk)
+            if total_bytes > MAX_UPLOAD_BYTES:
+                destination.close()
+                upload_path.unlink(missing_ok=True)
+                raise HTTPException(
+                    status_code=413,
+                    detail="File exceeds the 25 MB upload limit"
+                )
             destination.write(chunk)
 
     return upload_path
 
 
 def _extract_markdown_from_file(file_path: Path) -> str:
-    return pymupdf4llm.to_markdown(str(file_path))
+    markdown = pymupdf4llm.to_markdown(str(file_path))
+
+    with pymupdf.open(str(file_path)) as document:
+        page_count = document.page_count
+
+    if page_count > 0 and len(markdown.strip()) / page_count < SCANNED_PDF_MIN_CHARS_PER_PAGE:
+        raise ValueError(
+            f"Document appears to be scanned or image-only: only {len(markdown.strip())} "
+            f"characters of extractable text across {page_count} pages. ReqVue extracts "
+            "embedded text only (no OCR) — please submit a text-based PDF."
+        )
+
+    return markdown
 
 
 def process_document(job_id: str, *, file_path: Path | None = None, text: str | None = None) -> None:
@@ -84,16 +108,15 @@ async def parse_document(
     file: UploadFile | None = File(default=None),
 ) -> JSONResponse:
     job_id = str(uuid4())
-    JOB_STORE[job_id] = {"status": "processing", "result": None}
 
     if file is not None:
         upload_path = _save_upload(file)
+        JOB_STORE[job_id] = {"status": "processing", "result": None}
         background_tasks.add_task(process_document, job_id, file_path=upload_path)
         return JSONResponse({"job_id": job_id, "status": "processing"})
 
     content_type = request.headers.get("content-type", "")
     if "application/json" not in content_type:
-        JOB_STORE.pop(job_id, None)
         raise HTTPException(
             status_code=400,
             detail="Provide a multipart file upload or JSON body with {'text': '...'}"
@@ -102,12 +125,12 @@ async def parse_document(
     body = await request.json()
     text = body.get("text") if isinstance(body, dict) else None
     if not text:
-        JOB_STORE.pop(job_id, None)
         raise HTTPException(
             status_code=400,
             detail="JSON body must include a non-empty 'text' field"
         )
 
+    JOB_STORE[job_id] = {"status": "processing", "result": None}
     background_tasks.add_task(process_document, job_id, text=text)
     return JSONResponse({"job_id": job_id, "status": "processing"})
 
