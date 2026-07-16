@@ -1,0 +1,104 @@
+ReqVue — Test 2 Results: OpenRouter Extraction
+Model: ibm-granite/granite-4.1-8b
+============================================================
+
+FILE:      docling_MODOT SE 0000000020SL_SUPPLIER.md
+STATUS:    ✅ PASSED
+TIME:      3.43s
+POPULATED: 5/16 fields
+
+EXTRACTED FIELDS:
+  rfq_id_and_org: Solicitation number: MODOT SE 0000000020SL, Customer/Agency: State of Missouri, Buyer: LUCAS DOUGLAS, Contact Email: Lucas.Douglas@modot.mo.gov
+  quote_due_date: 2026-02-19
+  delivery_deadline: None
+  part_number_rev: None
+  material_and_grade: None
+  dimensions_raw: None
+  tolerances_stated: None
+  finishing_secondary: None
+  qty_tiers: None
+  incoterms_fob: FOB
+  target_price: None
+  legal_penalties: None
+  qa_certs_required: None
+  competing_vendors: None
+  missing_or_unclear: Part number, revision, material grade, dimensions, tolerances, finishing requirements, quantities, target price, legal penalties, QA certificates, and competing vendors are not specified in the provided RFQ excerpt.
+  estimator_summary: The RFQ from the Missouri Department of Transportation (MoDOT) seeks bids for Corrugated Metal Culvert Pipe (CMP) and bands for as-needed orders across the Southeast District. The solicitation includes a multiple-award contract with firm pricing from award through February 19, 2027, with optional four one-year extensions. Key risks include the lack of detailed part specifications, material grades, dimensions, tolerances, and finishing requirements, which may affect compliance and pricing accuracy. The primary next action for an estimator is to request clarification on these missing details from MoDOT to ensure a compliant bid.
+
+------------------------------------------------------------
+
+FILE:      docling_Palladium_RFQ_-_Assets_Insuran.md
+STATUS:    ✅ PASSED
+TIME:      3.03s
+POPULATED: 4/16 fields
+
+EXTRACTED FIELDS:
+  rfq_id_and_org: Subject RFQ #: 217805-PHBW-AssetsInsuranceCover, The Company: Make It Possible Botswana (Pty) Ltd, Contact Person: Neo Palai, Finance Manager
+  quote_due_date: 2023-12-15
+  delivery_deadline: None
+  part_number_rev: None
+  material_and_grade: None
+  dimensions_raw: None
+  tolerances_stated: None
+  finishing_secondary: None
+  qty_tiers: None
+  incoterms_fob: None
+  target_price: None
+  legal_penalties: None
+  qa_certs_required: None
+  competing_vendors: None
+  missing_or_unclear: Part number, revision level, material alloy and specification, dimensions, tolerance requirements, finishing requirements, requested quantities, Incoterms, target price, legal penalties, QA certificates, competing vendors information are not specified in the RFQ.
+  estimator_summary: The RFQ solicits quotations for 9 months insurance cover for furniture, IT equipment, and office equipment in Gaborone, Botswana, for the PROPEL Health Botswana project. The quote must be submitted by December 15, 2023, and must include detailed cost breakdowns, pricing in BWP (including VAT), and compliance with specified eligibility criteria and contract terms. Top risk factor: Missing critical technical specifications (material, dimensions, tolerances) and potential legal/ethical compliance gaps (conflict of interest, collusion). Recommended next action: Request clarification on missing technical details and confirm compliance with Palladium's Business Partner Code of Conduct and USAID Partner Vetting requirements.
+
+------------------------------------------------------------
+
+FILE:      docling_RFQ Machining.md
+STATUS:    ✅ PASSED
+TIME:      3.46s
+POPULATED: 8/16 fields
+
+EXTRACTED FIELDS:
+  rfq_id_and_org: RFQ Number: 11312599, Customer/Agency Name: Transnet SOC Ltd, Primary Contact: Zukile Balani (Email: Zukile.balani@transnet.net) and Zukisa Mboto (Email: Zukisa.mboto@transnet.net)
+  quote_due_date: 2023-10-04
+  delivery_deadline: 07.11.2023
+  part_number_rev: None
+  material_and_grade: None
+  dimensions_raw: None
+  tolerances_stated: None
+  finishing_secondary: None
+  qty_tiers: [1700]
+  incoterms_fob: None
+  target_price: None
+  legal_penalties: HIGH PRIORITY: Failure to provide any of the required particulars may render the bid invalid (Section NB). Additionally, penalties include exclusion from future bidding, restriction from public sector business for up to 10 years, and potential reporting to the Competition Commission or National Prosecuting Authority for serious breaches of law.
+  qa_certs_required: None
+  competing_vendors: No explicit mention of other vendors being solicited.
+  missing_or_unclear: Part number, revision level, material alloy and specification, all stated dimensions, tolerance requirements, finishing requirements, incoterms, target price, and material and grade are not specified in the document.
+  estimator_summary: The RFQ invites bids for machining services (RFQ Number 11312599) from Transnet SOC Ltd, with a closing date of 04 October 2023, 11:00 PM. The primary risk factors include the requirement for strict compliance with tax obligations, potential penalties for non-compliance, and the need for detailed bid documentation including pricing schedules and B-BEE evidence. The estimator must clarify missing information such as part specifications, dimensions, tolerances, and finishing requirements to proceed accurately.
+
+------------------------------------------------------------
+
+FILE:      docling_RFQ_1.md
+STATUS:    ✅ PASSED
+TIME:      2.62s
+POPULATED: 7/16 fields
+
+EXTRACTED FIELDS:
+  rfq_id_and_org: FA440722Q0015, 375 TH CONTRACTING SQUADRON, Scott AFB, IL, Carleen Clinger - Contracting Officer, 618-256-9260, Carleen.clinger@us.af.mil
+  quote_due_date: 2022-09-22
+  delivery_deadline: 12 WEEKS ARO
+  part_number_rev: None
+  material_and_grade: None
+  dimensions_raw: None
+  tolerances_stated: None
+  finishing_secondary: None
+  qty_tiers: None
+  incoterms_fob: Destination
+  target_price: None
+  legal_penalties: None
+  qa_certs_required: None
+  competing_vendors: Single Source requirement
+  missing_or_unclear: Part number, material alloy, dimensions, tolerances, finishing requirements, quantities, GSA contract number, proposed payment terms, exact item description for cubicles reconfiguration & install.
+  estimator_summary: The Air Force is seeking a single source quote for cubicles reconfiguration and installation in Building 50 at Scott AFB, IL, with delivery required within 12 weeks after order receipt. Key risks include unclear technical specifications (material, dimensions, tolerances) and the single-source nature of the requirement, which may limit competition and increase price risk. The estimator should request detailed technical data and confirm delivery feasibility before submitting a quote.
+
+------------------------------------------------------------
+

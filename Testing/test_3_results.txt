@@ -1,0 +1,110 @@
+ReqVue Test 3: Instructor + Pydantic Validation
+Model: deepseek/deepseek-v4-flash
+Documents found: 4
+================================================================================
+
+================================================================================
+Document 1/4: docling_MODOT SE 0000000020SL_SUPPLIER.md
+================================================================================
+Pydantic validation: PASSED
+Fields populated: 7/16
+Elapsed seconds: 17.57
+
+rfq_id_and_org: MODOT SE 0000000020SL, State of Missouri, Missouri Department of Transportation (MoDOT), Buyer: Lucas Douglas
+quote_due_date: February 19, 2026, 9:00 AM Central Time
+delivery_deadline: None
+part_number_rev: None
+material_and_grade: None
+dimensions_raw: None
+tolerances_stated: None
+finishing_secondary: None
+qty_tiers: None
+incoterms_fob: FOB Destination
+target_price: None
+legal_penalties: Withholding of payments, cancellation, termination or suspension for noncompliance with nondiscrimination provisions; contract sanctions for violation of Executive Order 07-13
+qa_certs_required: Compliance with Missouri Standard Specifications for Highway Construction; material inspection; MoDOT Pipe ID required on shipping documents
+competing_vendors: None
+missing_or_unclear: Specific part numbers, quantities, delivery schedules, material specifications, dimensions, tolerances, finishing, certifications, target price, and competing vendors are not provided. The full solicitation package (Lines and Specifications) is required to determine exact items and requirements.
+estimator_summary: State of Missouri MoDOT IFB MODOT SE 0000000020SL, due Feb 19, 2026, for unspecified supplies/services. FOB Destination. Contract period through Feb 2027 with renewals. No item details, quantities, or delivery deadlines in excerpt. Requires registration in MissouriBUYS. Price must include all costs....
+
+================================================================================
+Document 2/4: docling_Palladium_RFQ_-_Assets_Insuran.md
+================================================================================
+Pydantic validation: PASSED
+Fields populated: 6/16
+Elapsed seconds: 7.65
+
+rfq_id_and_org: RFQ #217805-PHBW-AssetsInsuranceCover; Issuing organization: Palladium through Make It Possible Botswana (Pty) Ltd; Contact: Neo Palai, Finance Manager
+quote_due_date: December 15, 2023, at 4:30pm
+delivery_deadline: Purchase Order Period of Performance: January 1 to September 30, 2024 (9 months cover)
+part_number_rev: None
+material_and_grade: None
+dimensions_raw: None
+tolerances_stated: None
+finishing_secondary: None
+qty_tiers: None
+incoterms_fob: None
+target_price: None
+legal_penalties: None
+qa_certs_required: Eligibility Criteria includes: Legal registration, membership of Botswana Non-Bank Financial Institutions Regulatory Authority (NBFIRA), VAT & Tax Clearance certificate, TIN No, Proof of Bank Account, Current Tax Clearance Certificate, Industry Certification/Trading License. Also compliance with Pal...
+competing_vendors: None
+missing_or_unclear: No detailed list of assets to be insured (only categories: Furniture, IT Equipment, Office Equipment). No specific coverage amounts or per-item values stated. No insurance policy terms or exclusions detailed. No pricing guidance or target price. No delivery/shipping terms as it is a service. No pena...
+estimator_summary: This is a service RFQ for assets insurance cover, not a manufactured part. An estimator would need to clarify the asset inventory and values, required coverage limits, and any specific policy terms. The closing date is December 15, 2023, with a performance period from Jan 1 to Sep 30, 2024. Bid in B...
+
+================================================================================
+Document 3/4: docling_RFQ Machining.md
+================================================================================
+Pydantic validation: PASSED
+Fields populated: 4/16
+Elapsed seconds: 16.42
+
+rfq_id_and_org: RFQ Number 11312599 from TPT, a division of Transnet SOC Ltd
+quote_due_date: 04.10.2023 at 11:00 pm
+delivery_deadline: None
+part_number_rev: None
+material_and_grade: None
+dimensions_raw: None
+tolerances_stated: None
+finishing_secondary: None
+qty_tiers: None
+incoterms_fob: None
+target_price: None
+legal_penalties: None
+qa_certs_required: None
+competing_vendors: None
+missing_or_unclear: Closing date is ambiguous – document shows both '28.09.2023' and '04.10.2023' at 11:00 pm; estimator should confirm which is correct. | No part numbers, drawing numbers, or any item identifiers provided. | No material specifications, grades, or standards mentioned. | No dimensions, tolerances, or dr...
+estimator_summary: This is a South African public-sector RFQ from Transnet for general machining services. Critical details such as part numbers, materials, quantities, delivery dates, and specifications are entirely absent from the document. The only clear facts are the RFQ number (11312599), the closing date (appear...
+
+================================================================================
+Document 4/4: docling_RFQ_1.md
+================================================================================
+Pydantic validation: PASSED
+Fields populated: 6/16
+Elapsed seconds: 18.46
+
+rfq_id_and_org: FA440722Q0015 – 375th Contracting Squadron, Scott AFB, IL (Carleen Clinger)
+quote_due_date: 12:00 P.M. CST 22 September 2022
+delivery_deadline: 12 weeks after receipt of order (ARO)
+part_number_rev: None
+material_and_grade: None
+dimensions_raw: None
+tolerances_stated: None
+finishing_secondary: None
+qty_tiers: None
+incoterms_fob: FOB Destination
+target_price: None
+legal_penalties: None
+qa_certs_required: None
+competing_vendors: None
+missing_or_unclear: Attachment 1 (Statement of Work) not provided – scope of cubicle reconfiguration and installation undefined. | No drawings, dimensions, materials, or specifications for the cubicles or work required. | Funds are not currently available (FAR 52.232-18 applies) – award depends on future funding. | Sin...
+estimator_summary: US Air Force RFQ for cubicle reconfiguration and installation (one lot) at Scott AFB. Delivery required within 12 weeks of order. FOB destination. Quote due 22 Sep 2022. No materials, dimensions, or drawing provided – all work is per an unreferenced Attachment 1. Funds are not currently available, c...
+
+================================================================================
+SUMMARY
+================================================================================
+Documents processed: 4
+Validation passed: 4
+Validation failed or errored: 0
+Average fields populated across passing documents: 5.75/16
+
+Test 3 complete. If validation passed on 2+ documents, architecture is proven. Ready to build.
