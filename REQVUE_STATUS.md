@@ -10,16 +10,18 @@ bid-critical checks PASS — DLA NSN/material/dimensions/FOB intact, MoDOT
 `quote_due_date` 07/09/2026 and `delivery_deadline` Sep 29 recovered. The
 serving image is the last `railway up` snapshot (2026-07-02 local code).
 
-**⚠️ LANDMINE — stale linked GitHub repo.** The Railway service is linked to
-GitHub `msanchez78158/reqvue-api` (visible in `railway status`; repo is
-PUBLIC — fetchable unauthenticated). That repo predates ALL 2026-07-02 fixes:
-no two-track trimmer (`_trim_structured` absent), `max_tokens=2000`, old
-non-JSON prompt. Any push to its main branch or a dashboard "redeploy from
-repo" will auto-deploy stale code and silently regress production. Until
-resolved (disconnect the repo from the service, or force-push current local
-main over it), deploy ONLY via `railway up` from this folder. Local folder
-became a real git repo today (root commit `c4ecb81`); the GitHub remote is
-added locally as `origin` for comparison, histories are unrelated.
+**✅ RESOLVED same day — stale linked GitHub repo (was a landmine).** The
+Railway service is linked to GitHub `msanchez78158/reqvue-api`, which was
+stale (predated all 2026-07-02 fixes: no two-track trimmer, `max_tokens=2000`,
+old non-JSON prompt) — any repo-triggered build would have silently regressed
+production. Fixed by making the local folder a real git repo (root commit
+`c4ecb81`) and force-pushing local `main` over GitHub `main` (commit
+`6e87611`, old tip `f8e2d43` discarded — it contained nothing not superseded).
+Repo confirmed PRIVATE. The push auto-triggered Railway deployment `60ada9e0`,
+which was verified with `verify_deploy.py` (jobs `6417132d` DLA 14/16,
+`36c9d341` MoDOT 9/16): all bid-critical checks PASS, including MoDOT
+`quote_due_date`/`delivery_deadline`. **GitHub push → auto-deploy is now the
+primary deploy path; keep local and GitHub `main` in sync.**
 
 Local pipeline verification (same day, pre-reactivation): trimmer probes DLA
 11/11 and MoDOT 5/5; local end-to-end on DLA 14/16 fields matching baseline.

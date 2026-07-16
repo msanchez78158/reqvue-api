@@ -40,14 +40,14 @@ Update it whenever extraction behavior or deployment state changes.**
 ## Deployment
 
 - Railway project **ReqVue**, service **ReqVue-api**,
-  `https://reqvue-api-production.up.railway.app`. Deploy ONLY with
-  `railway up` from repo root (Railway CLI may need
-  `export PATH="$HOME/.hermes/node/bin:$PATH"`).
-- **Do not push to or deploy from the linked GitHub repo
-  (`msanchez78158/reqvue-api`) — it is stale and public**; a repo-triggered
-  build would regress production to the pre-2026-07-02 extractor. See
-  `REQVUE_STATUS.md` (2026-07-16 entry) until the link is removed or the repo
-  is synced.
+  `https://reqvue-api-production.up.railway.app`. Railway CLI may need
+  `export PATH="$HOME/.hermes/node/bin:$PATH"`.
+- **Deploy path: push to GitHub `msanchez78158/reqvue-api` main** (private
+  repo, linked to the Railway service — every push auto-deploys). Synced with
+  local on 2026-07-16 and verified; `railway up` from repo root remains the
+  fallback that bypasses GitHub. Keep local `main` and GitHub `main` in sync —
+  drift between them was a production-regression hazard once already (see
+  `REQVUE_STATUS.md`, 2026-07-16).
 - Verify a deploy against real extraction output, not just `/health` —
   "it builds" has been misleading before. Standard check:
   `.venv/bin/python verify_deploy.py` (both baseline PDFs through the
