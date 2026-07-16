@@ -1,0 +1,15 @@
+# Core API
+fastapi>=0.115.0
+uvicorn>=0.30.0
+python-multipart>=0.0.9
+
+# PDF to markdown — replaces docling-slim, docling-parse, pypdfium2
+# lightweight, no ML model downloads, same markdown output format
+pymupdf4llm==1.27.2.3
+
+# LLM + env
+openai==2.40.0
+python-dotenv==1.2.2
+
+# Data validation
+pydantic==2.13.4
