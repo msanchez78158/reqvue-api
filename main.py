@@ -56,7 +56,7 @@ def _save_upload(upload: UploadFile) -> Path:
     return upload_path
 
 
-def _extract_markdown_from_file(file_path: Path) -> str:
+def _extract_markdown_from_file(file_path: Path) -> tuple[str, int]:
     markdown = pymupdf4llm.to_markdown(str(file_path))
 
     with pymupdf.open(str(file_path)) as document:
@@ -69,15 +69,16 @@ def _extract_markdown_from_file(file_path: Path) -> str:
             "embedded text only (no OCR) — please submit a text-based PDF."
         )
 
-    return markdown
+    return markdown, page_count
 
 
 def process_document(job_id: str, *, file_path: Path | None = None, text: str | None = None) -> None:
     try:
         if file_path is not None:
-            markdown = _extract_markdown_from_file(file_path)
+            markdown, page_count = _extract_markdown_from_file(file_path)
         elif text is not None:
             markdown = text
+            page_count = None
         else:
             raise ValueError("No document content provided")
 
@@ -87,9 +88,12 @@ def process_document(job_id: str, *, file_path: Path | None = None, text: str | 
             document_text=trimmed,
         )
 
+        result = brief.model_dump()
+        result["pages_processed"] = page_count
+
         JOB_STORE[job_id] = {
             "status": "complete",
-            "result": brief.model_dump(),
+            "result": result,
         }
     except Exception as exc:
         JOB_STORE[job_id] = {
@@ -165,9 +169,10 @@ def process_document_v2(job_id: str, *, file_path: Path | None = None, text: str
             ) from exc
 
         if file_path is not None:
-            markdown = _extract_markdown_from_file(file_path)
+            markdown, page_count = _extract_markdown_from_file(file_path)
         elif text is not None:
             markdown = text
+            page_count = None
         else:
             raise ValueError("No document content provided")
 
