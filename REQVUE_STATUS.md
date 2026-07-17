@@ -41,6 +41,15 @@ verdict APPROVED):
   on malformed JSON (`json.JSONDecodeError`) or schema mismatch (pydantic
   `ValidationError`). Timeouts are still not retried.
 
+Hardening verified in production same day (deployment `8c5cf870`, commit
+`ee5f4bd`): `verify_deploy.py` PASS on both baseline PDFs (DLA job `0a41c040`
+13/16, MoDOT job `dd3fc293` 8/16 — all bid-critical checks green); a synthetic
+3-page image-only PDF (job `50f4c99d`) correctly returned status "failed" with
+the scanned/no-OCR message instead of 16 nulls. Note: DLA `incoterms_fob` now
+surfaces the document's Block 7 vs CLIN 0001 conflict explicitly ("Conflicting:
+Block 7 states FOB Destination, but CLIN 0001 states DELIVER FOB: O…") — more
+honest than earlier runs that picked one.
+
 Reviewer's non-blocking notes (logged, not fixed): (1) `/parse/v2` still
 creates its job entry before `_save_upload`, so an oversized v2 upload orphans
 a "processing" job — v2 handler is under the no-touch constraint; fold into
