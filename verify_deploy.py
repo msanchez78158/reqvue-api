@@ -85,7 +85,7 @@ def main() -> int:
         print(f"job {job_id} submitted, polling...")
         result = poll(job_id)
 
-        populated = sum(1 for v in result.values() if v)
+        populated = sum(1 for k, v in result.items() if v and k != "pages_processed")
         print(f"fields populated: {populated}/16")
 
         for field, needles in field_checks.items():

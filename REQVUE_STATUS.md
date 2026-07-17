@@ -50,6 +50,12 @@ surfaces the document's Block 7 vs CLIN 0001 conflict explicitly ("Conflicting:
 Block 7 states FOB Destination, but CLIN 0001 states DELIVER FOB: O…") — more
 honest than earlier runs that picked one.
 
+**`pages_processed` added to `/parse` results 2026-07-17** (for the
+redomaworks.com/reqvue demo frontend): v1 job results now carry a
+`pages_processed` key (int for file jobs, null for text jobs) alongside the 16
+brief fields. It lives outside `RFQBrief` (added to the result dict after
+`model_dump()`); v2 results unchanged. Reviewer APPROVED.
+
 Reviewer's non-blocking notes (logged, not fixed): (1) `/parse/v2` still
 creates its job entry before `_save_upload`, so an oversized v2 upload orphans
 a "processing" job — v2 handler is under the no-touch constraint; fold into
