@@ -21,8 +21,9 @@ Railwaylogs*.log
 /*.pdf
 /*.PDF
 
-# Explicitly public, fictional verification fixture
-!/Testing/synthetic_rfq.pdf
+# Explicitly retained procurement verification fixtures
+!/Testing/SPE8E426T1829.PDF
+!/Testing/MODOT 0000000343SL_SUPPLIER.pdf
 
 # Machine-local agent permissions
 /.claude/settings.local.json

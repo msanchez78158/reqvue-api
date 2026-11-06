@@ -3,7 +3,7 @@
 FastAPI service that extracts a structured 16-field RFQ brief from procurement
 documents (PDF/text) for manufacturing estimators deciding whether to quote.
 
-**Current state / history / known limitations: see `REQVUE_STATUS.md` — that file
+**Current state / history / known limitations: see `docs/REQVUE_STATUS.md` — that file
 is the source of truth for what works, what's broken, and what was last tested.
 Update it whenever extraction behavior or deployment state changes.**
 
@@ -47,16 +47,17 @@ Update it whenever extraction behavior or deployment state changes.**
   local on 2026-07-16 and verified; `railway up` from repo root remains the
   fallback that bypasses GitHub. Keep local `main` and GitHub `main` in sync —
   drift between them was a production-regression hazard once already (see
-  `REQVUE_STATUS.md`, 2026-07-16).
+  `docs/REQVUE_STATUS.md`, 2026-07-16).
 - Verify a deploy against real extraction output, not just `/health` —
   "it builds" has been misleading before. Standard check:
-  `.venv/bin/python verify_deploy.py` (the synthetic PDF through the
+  `.venv/bin/python verify_deploy.py` (the retained PDF fixtures through the
   deployed `/parse`, asserts bid-critical fields, exits nonzero on failure).
 
 ## Testing
 
-- Only fictional RFQ samples belong in `Testing/`. `synthetic_rfq.pdf` is the
-  sanitized verification fixture; it contains no real procurement or contact data.
+- `Testing/` contains only the two procurement PDF fixtures explicitly retained
+  by the owner: `SPE8E426T1829.PDF` and `MODOT 0000000343SL_SUPPLIER.pdf`.
+  Do not add private client documents or extracted results.
 - Local venv: `.venv/bin/python`; run scripts from repo root so imports resolve.
 
 # Project Rules & Agentic Delegation Policy

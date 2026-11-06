@@ -1,4 +1,4 @@
-"""Post-deploy verification using a fictional RFQ fixture.
+"""Post-deploy verification using the retained procurement PDF fixtures.
 Checks extraction of bid-critical fields without real procurement data.
 
 Usage: .venv/bin/python verify_deploy.py [base_url]
@@ -19,13 +19,24 @@ POLL_TIMEOUT = 300
 # varying but equivalent formats at temperature 0: "07/09/2026" vs "2026-07-09").
 CHECKS = [
     (
-        "Testing/synthetic_rfq.pdf",
+        "Testing/SPE8E426T1829.PDF",
         {
-            "rfq_id_and_org": ["DEMO-RFQ-001"],
-            "part_number_rev": ["DEMO-PART-001"],
-            "material_and_grade": ["6061"],
-            "incoterms_fob": ["Destination"],
-            "qa_certs_required": ["ISO 9001"],
+            "rfq_id_and_org": ["SPE8E4-26-T-1829"],
+            "quote_due_date": [["JUN 29", "2026-06-29", "06/29/2026", "June 29"]],
+            "part_number_rev": ["9535005962077"],
+            "material_and_grade": ["itanium"],
+            "dimensions_raw": ["0.025", "36.00", "96.00"],
+            "finishing_secondary": ["MIL-STD"],
+            "incoterms_fob": ["Origin"],
+        },
+    ),
+    (
+        "Testing/MODOT 0000000343SL_SUPPLIER.pdf",
+        {
+            "rfq_id_and_org": ["0000000343SL"],
+            "quote_due_date": [["07/09/2026", "2026-07-09", "July 9, 2026"]],
+            "delivery_deadline": [["September 29", "2026-09-29", "09/29/2026", "Sep 29"]],
+            "qa_certs_required": ["OSHA"],
         },
     ),
 ]
