@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import Any
@@ -25,7 +26,7 @@ app = FastAPI(title="reqvue-api")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://redomaworks.com", "https://www.redomaworks.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -126,9 +127,21 @@ async def parse_document(
             detail="Provide a multipart file upload or JSON body with {'text': '...'}"
         )
 
-    body = await request.json()
+    raw_body = bytearray()
+    async for chunk in request.stream():
+        if len(raw_body) + len(chunk) > MAX_UPLOAD_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail="JSON body exceeds the 25 MB upload limit"
+            )
+        raw_body.extend(chunk)
+
+    try:
+        body = json.loads(raw_body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise HTTPException(status_code=400, detail="Request body must be valid JSON")
     text = body.get("text") if isinstance(body, dict) else None
-    if not text:
+    if not isinstance(text, str) or not text.strip():
         raise HTTPException(
             status_code=400,
             detail="JSON body must include a non-empty 'text' field"
