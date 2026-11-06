@@ -3,7 +3,7 @@
 FastAPI service that extracts a structured 16-field RFQ brief from procurement
 documents (PDF/text) for manufacturing estimators deciding whether to quote.
 
-**Current state / history / known limitations: see `REQVUE_STATUS.md` — that file
+**Current state / history / known limitations: see `docs/REQVUE_STATUS.md` — that file
 is the source of truth for what works, what's broken, and what was last tested.
 Update it whenever extraction behavior or deployment state changes.**
 
@@ -18,7 +18,7 @@ Update it whenever extraction behavior or deployment state changes.**
 - `trimmer.py` — `smart_trim` caps input at 18,000 chars: keeps beginning/end,
   scores 900-char middle chunks by spec-signal and risk-keyword density
   (regexes for NSN/dimensions/spec standards + tiered keywords). Heuristic —
-  vocabulary gaps cause real field losses (see status file, MODOT test).
+  vocabulary gaps cause real field losses (see status file).
 - `extractor.py` — single LLM call to **DeepSeek (deepseek/deepseek-v4-flash)
   via OpenRouter** (`OPENROUTER_API_KEY`), temperature 0, `max_tokens=6000`
   (reasoning tokens count toward the cap — do not lower it), prompt demands a
@@ -47,16 +47,17 @@ Update it whenever extraction behavior or deployment state changes.**
   local on 2026-07-16 and verified; `railway up` from repo root remains the
   fallback that bypasses GitHub. Keep local `main` and GitHub `main` in sync —
   drift between them was a production-regression hazard once already (see
-  `REQVUE_STATUS.md`, 2026-07-16).
+  `docs/REQVUE_STATUS.md`, 2026-07-16).
 - Verify a deploy against real extraction output, not just `/health` —
   "it builds" has been misleading before. Standard check:
-  `.venv/bin/python verify_deploy.py` (both baseline PDFs through the
+  `.venv/bin/python verify_deploy.py` (the retained PDF fixtures through the
   deployed `/parse`, asserts bid-critical fields, exits nonzero on failure).
 
 ## Testing
 
-- Real RFQ samples live in `Testing/`. `SPE8E426T1829.PDF` (DLA titanium sheet,
-  20 pp) is the regression baseline; probe strings listed in `REQVUE_STATUS.md`.
+- `Testing/` contains only the two procurement PDF fixtures explicitly retained
+  by the owner: `SPE8E426T1829.PDF` and `MODOT 0000000343SL_SUPPLIER.pdf`.
+  Do not add private client documents or extracted results.
 - Local venv: `.venv/bin/python`; run scripts from repo root so imports resolve.
 
 # Project Rules & Agentic Delegation Policy

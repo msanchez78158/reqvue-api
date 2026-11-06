@@ -1,9 +1,8 @@
-"""Post-deploy verification: run the two baseline RFQs through the deployed
-/parse endpoint and check bid-critical fields against the REQVUE_STATUS.md
-baseline (2026-07-08 jobs b1452aac / fca8fb64).
+"""Post-deploy verification using the retained procurement PDF fixtures.
+Checks extraction of bid-critical fields without real procurement data.
 
 Usage: .venv/bin/python verify_deploy.py [base_url]
-Exits nonzero if any document fails its checks.
+Exits nonzero if the document fails its checks.
 """
 
 import json
@@ -32,7 +31,7 @@ CHECKS = [
         },
     ),
     (
-        "MODOT 0000000343SL_SUPPLIER.pdf",
+        "Testing/MODOT 0000000343SL_SUPPLIER.pdf",
         {
             "rfq_id_and_org": ["0000000343SL"],
             "quote_due_date": [["07/09/2026", "2026-07-09", "July 9, 2026"]],

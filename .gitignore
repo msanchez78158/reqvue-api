@@ -7,3 +7,23 @@ __pycache__/
 .DS_Store
 Railwaylogs*.log
 .claude/scheduled_tasks.lock
+
+# Private procurement documents and generated extraction output
+/Testing/*.pdf
+/Testing/*.PDF
+/Testing/*.docx
+/Testing/*.xlsx
+/Testing/*.xls
+/Testing/*.doc
+/Testing/docling_*.md
+/Testing/test_*_results.txt
+/test_*_results.txt
+/*.pdf
+/*.PDF
+
+# Explicitly retained procurement verification fixtures
+!/Testing/SPE8E426T1829.PDF
+!/Testing/MODOT 0000000343SL_SUPPLIER.pdf
+
+# Machine-local agent permissions
+/.claude/settings.local.json
